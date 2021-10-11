@@ -1,9 +1,9 @@
 tasks:
-  - init: npm install     
+  - init: npm install   
 
 vscode:
   extensions:
-    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
 
 ports:
   - port: 3000
