@@ -1,8 +1,10 @@
-# List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
-  - init: echo 'init env' # runs during prebuild    
+  - init: npm install     
 
-# List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint
+
 ports:
   - port: 3000
     onOpen: open-preview
