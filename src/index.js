@@ -1,6 +1,8 @@
 // Dependencies import
 import React from "react";
 import ReactDOM from "react-dom";
+import "./index.css";
+
 // Standard ES5 function
 function sayHello() {
   console.log("Hello!");
@@ -21,11 +23,16 @@ class Square extends React.Component {
     // event handler is handling onClick event
     return (
       <button
+        className="square"
         onClick={() => {
           this.props.onClick();
         }}
       >
-        {this.props.value}
+        {
+          // check if this.props.value has a value !== null and print it
+          // OR if this.props.value is null print <div>&nbsp;</div>
+          this.props.value || <div>&nbsp;</div>
+        }
       </button>
     );
   }
@@ -56,11 +63,10 @@ class Board extends React.Component {
       const arrowSquareFunction = () => this.props.handleSquareClick(index);
 
       return (
-        <Square
-          key={index}
-          onClick={arrowSquareFunction}
-          value={arrayElement}
-        />
+        <div key={index} className="square">
+          <Square onClick={arrowSquareFunction} value={arrayElement} />
+          {(index + 1) % 3 === 0 ? <br /> : <></>}
+        </div>
       );
     });
   }
@@ -78,11 +84,40 @@ class Game extends React.Component {
     this.state = {
       squares: Array(9).fill(null), // square: [null, null, ...]
       nextSymbol: "O",
+      gameWon: false,
     };
 
     // Connect game component to the square component
     // If you need to use something from Game component in other components you need to bind
     this.handleSquareClick = this.handleSquareClick.bind(this);
+  }
+
+  checkWinning(squares) {
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    for (let i = 0; i < winningCombinations.length; i++) {
+      // let a = winningCombinations[i][0];
+      // let b = winningCombinations[i][1];
+      // let c = winningCombinations[i][2];
+      let [a, b, c] = winningCombinations[i];
+
+      if (
+        (squares[a] === "X" || squares[a] === "O") &&
+        squares[a] === squares[b] &&
+        squares[a] === squares[c]
+      ) {
+        return winningCombinations[i];
+      }
+    }
   }
 
   // Function to handle user square click
@@ -94,8 +129,23 @@ class Game extends React.Component {
 
     // I get the squares from my state
     const stateSquares = this.state.squares;
+
+    // Check if the square has already a value
+    if (stateSquares[index] !== null || this.state.gameWon) {
+      return;
+    }
+
     // Need to update the square clicked by the user
     stateSquares[index] = this.state.nextSymbol;
+
+    let winningCombination = this.checkWinning(stateSquares);
+    if (winningCombination) {
+      // Expected output: Win [0, 1, 2]
+      console.log(`Win ${winningCombination}`);
+      // YOU CAN'T do this this.state.gameWon = true
+      this.setState({ gameWon: true });
+    }
+
     // Refresh application state
     // const nextSymbol = null;
     // if (this.state.nextSymbol === "X") {
